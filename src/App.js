@@ -5,7 +5,8 @@ import LabHome from './Components/LabHome.js';
 
 function App() {
   //return <TestCollection />;
-  return <LabHome />;
+  //return <LabHome />;
+  return <Login />;
 }
 
 export default App;
