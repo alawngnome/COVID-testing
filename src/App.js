@@ -4,11 +4,9 @@ import TestCollection from './Components/TestCollection.js';
 
 import LabHome from './Components/LabHome.js';
 
-function App() {
+export default function App() {
   //return <TestCollection />;
   //return <LabHome />;
   //return <Login />;
   return <EELogin />;
 }
-
-export default App;
