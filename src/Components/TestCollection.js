@@ -65,6 +65,8 @@ function TestCollection() {
   const [testBarcode, setTestBarcode] = useState('');
   const [entries, setEntries] = useState([]);
 
+  // handle state functions
+
   const handleIdChange = (e) => {
     setId(e.target.value);
   };
@@ -79,15 +81,17 @@ function TestCollection() {
       testBarcode,
       checked: false,
     };
-    let tempEntries = [];
-    tempEntries = entries;
+    let tempEntries = entries;
     tempEntries.push(newTest);
     setEntries(tempEntries);
     setId('');
     setTestBarcode('');
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    let tempEntries = entries.filter((entry) => !entry.checked);
+    setEntries(tempEntries);
+  };
 
   const handleChecked = (e) => {
     let tempEntries = [];
@@ -102,9 +106,9 @@ function TestCollection() {
       }
     });
     setEntries(tempEntries);
-    console.log(entries);
   };
 
+  // render
   return (
     <Container className={classes.root}>
       <Paper className={classes.header}>Test Collection</Paper>
