@@ -90,7 +90,19 @@ function TestCollection() {
   const handleDelete = () => {};
 
   const handleChecked = (e) => {
-    console.log(e.target.value);
+    let tempEntries = [];
+    entries.forEach((entry) => {
+      if (entry.id === e.target.value) {
+        // e.target.value = id of entry being modified
+        let copyEntry = entry;
+        copyEntry.checked = e.target.checked;
+        tempEntries.push(copyEntry);
+      } else {
+        tempEntries.push(entry);
+      }
+    });
+    setEntries(tempEntries);
+    console.log(entries);
   };
 
   return (
@@ -134,7 +146,7 @@ function TestCollection() {
         {entries.map((entry) => (
           <Grid className={classes.gridItem} item xs={12} key={entry.id}>
             <Grid className={classes.checkbox} item xs={1}>
-              <Checkbox value={entry.checked} onChange={handleChecked} />
+              <Checkbox value={entry.id} onChange={handleChecked} />
             </Grid>
             <Grid className={classes.gridItemPart} item xs={5}>
               <p className={classes.text} style={{ marginRight: '6vw' }}>
