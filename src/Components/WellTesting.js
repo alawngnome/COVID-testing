@@ -10,6 +10,7 @@ import {
   Button,
   Grid,
   Checkbox,
+  Box,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -42,6 +43,8 @@ const useStyles = makeStyles({
   },
   button: {
     marginTop: '2vh',
+    marginLeft: '2vh',
+    marginRight: '2vh',
   },
   gridRoot: {
     marginTop: '2vh',
@@ -51,16 +54,16 @@ const useStyles = makeStyles({
   gridHeaderText: {
     backgroundColor: '#0998F2',
     color: 'white',
-    fontSize: '1.0em',
-    fontWeight: '400',
+    fontSize: '1.5em',
+    fontWeight: '500',
     textAlign: 'center',
     padding: '2vh',
   },
-  gridItem: {
+  gridRow: {
     minHeight: '5vh',
     padding: '2vh',
   },
-  gridItemPart: {
+  gridItem: {
     fontFamily: 'Roboto',
     fontSize: '1.5em',
     fontWeight: '1000',
@@ -154,35 +157,53 @@ function WellTesting() {
           Add
         </Button>
         <Grid className={classes.gridRoot} container>
-          <Grid className={classes.gridItem} container xs={12}>
-            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+          <Grid className={classes.gridRow} container xs={12}>
+            <Grid className={classes.gridItem} item xs={4} elevation={5}>
               <p className={classes.gridHeaderText}>Well Barcode</p>
             </Grid>
-            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+            <Grid className={classes.gridItem} item xs={4} elevation={5}>
               <p className={classes.gridHeaderText}>Pool Barcode</p>
             </Grid>
-            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+            <Grid className={classes.gridItem} item xs={4} elevation={5}>
               <p className={classes.gridHeaderText}>Result</p>
             </Grid>
           </Grid>
           {entries.map((entry) => (
-            <Grid className={classes.gridItem} container xs={12} spacing={3}>
+            <Grid className={classes.gridRow} container xs={12} spacing={3}>
               <Grid className={classes.checkbox} item xs={1}>
                 <Checkbox color='primary' />
               </Grid>
-              <Grid className={classes.gridItemPart} item xs={3}>
+              <Grid className={classes.gridItem} item xs={3}>
                 <Paper className={classes.text}>{entry.wellBarcode}</Paper>
               </Grid>
-              <Grid className={classes.gridItemPart} item xs={4}>
+              <Grid className={classes.gridItem} item xs={4}>
                 <Paper className={classes.text}>{entry.poolBarcode}</Paper>
               </Grid>
-              <Grid className={classes.gridItemPart} item xs={4}>
+              <Grid className={classes.gridItem} item xs={4}>
                 <Paper className={classes.text}>{entry.result}</Paper>
               </Grid>
             </Grid>
           ))}
         </Grid>
+        <Box>
+          <Button
+            variant='contained'
+            color='primary'
+            className={classes.button}
+          >
+            Edit
+          </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            className={classes.button}
+          >
+            Delete
+          </Button>
+        </Box>
       </Container>
+      <br />
+      <br />
     </div>
   );
 }
