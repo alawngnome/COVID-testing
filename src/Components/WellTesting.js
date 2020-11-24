@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -15,6 +15,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import Header from './Navbar';
+import { fetchPools } from '../Firebase/index.js';
 
 const useStyles = makeStyles({
   root: {
@@ -86,6 +87,7 @@ function WellTesting() {
   const [poolBarcode, setPoolBarcode] = useState('');
   const [result, setResult] = useState('');
   const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleChangeWellBarcode = (event) => {
     setWellBarcode(event.target.value);
@@ -108,6 +110,23 @@ function WellTesting() {
     setResult('');
   };
 
+  // For reading from Firestore
+  useEffect(() => {
+    fetchPools().then((snapshot) => {
+      let tempEntries = [];
+      snapshot.forEach((doc) => {
+        let data = doc.data();
+        let wellBarcode = data.wellBarcode;
+        let poolBarcode = data.poolBarcode;
+        let result = data.result;
+        tempEntries.push({ wellBarcode, poolBarcode, result });
+      });
+      setEntries(tempEntries);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return null;
   return (
     <div>
       <Header />
@@ -169,7 +188,13 @@ function WellTesting() {
             </Grid>
           </Grid>
           {entries.map((entry) => (
-            <Grid className={classes.gridRow} container xs={12} spacing={3}>
+            <Grid
+              className={classes.gridRow}
+              container
+              xs={12}
+              spacing={3}
+              key={entry.wellBarcode}
+            >
               <Grid className={classes.checkbox} item xs={1}>
                 <Checkbox color='primary' />
               </Grid>

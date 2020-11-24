@@ -18,14 +18,19 @@ firebase.auth();
 
 let db = firebase.firestore();
 
-// WellTesting functions
-
+// EEHome functions
 export const fetchEmployeeHomeData = async () => {
   const doc = await db
     .collection('Employees')
     .doc('48qVcSNDDsbAUNZbWbm4pBU792h1')
-    .get(); // Returns user data based on uid
+    .get();
   return doc.data();
+};
+
+// WellTesting functions
+export const fetchPools = async () => {
+  const snapshot = await db.collection('Pool').get();
+  return snapshot;
 };
 
 export default firebase;
