@@ -8,7 +8,7 @@ import WellTesting from './Components/WellTesting.js';
 export default function App() {
   //return <TestCollection />;
   //return <LabHome />;
-  //return <WellTesting />;
+  return <WellTesting />;
   //return <Login />;
   //return <EELogin />;
 }
