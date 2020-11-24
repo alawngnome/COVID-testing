@@ -13,6 +13,8 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Header from './Navbar';
+
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -75,40 +77,43 @@ function WellTesting() {
   };
 
   return (
-    <Container className={classes.root}>
-      <Paper className={classes.header} elevation={10}>
-        Well Testing
-      </Paper>
-      <br></br>
-      <TextField
-        className={classes.textField}
-        id='wellBarcodeField'
-        variant='outlined'
-        label='Well barcode:'
-        size='small'
-      />
-      <TextField
-        className={classes.textField}
-        id='pollBarcodeField'
-        variant='outlined'
-        label='Poll barcode:'
-        size='small'
-      />
-      <FormControl className={classes.formControl} variant='outlined'>
-        <InputLabel id='resultSelect'>Result</InputLabel>
-        <Select
-          labelId='resultSelect'
-          label='Result'
-          id='resultSelect'
-          onChange={handleSelect}
-          value={result}
-        >
-          <MenuItem value={'in progress'}>In progress</MenuItem>
-          <MenuItem value={'positive'}>Positive</MenuItem>
-          <MenuItem value={'negative'}>Negative</MenuItem>
-        </Select>
-      </FormControl>
-    </Container>
+    <div>
+      <Header />
+      <Container className={classes.root}>
+        <Paper className={classes.header} elevation={10}>
+          Well Testing
+        </Paper>
+        <br></br>
+        <TextField
+          className={classes.textField}
+          id='wellBarcodeField'
+          variant='outlined'
+          label='Well barcode:'
+          size='small'
+        />
+        <TextField
+          className={classes.textField}
+          id='pollBarcodeField'
+          variant='outlined'
+          label='Poll barcode:'
+          size='small'
+        />
+        <FormControl className={classes.formControl} variant='outlined'>
+          <InputLabel id='resultSelect'>Result</InputLabel>
+          <Select
+            labelId='resultSelect'
+            label='Result'
+            id='resultSelect'
+            onChange={handleSelect}
+            value={result}
+          >
+            <MenuItem value={'in progress'}>In progress</MenuItem>
+            <MenuItem value={'positive'}>Positive</MenuItem>
+            <MenuItem value={'negative'}>Negative</MenuItem>
+          </Select>
+        </FormControl>
+      </Container>
+    </div>
   );
 }
 

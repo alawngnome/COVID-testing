@@ -17,16 +17,16 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-
 //Navbar
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { withRouter } from "react-router-dom";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { withRouter } from 'react-router-dom';
 
+import Header from './Navbar';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -49,18 +49,18 @@ const useStyles = makeStyles((theme) => ({
 
   //Navbar CSS
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   headerOptions: {
-    display: "flex",
+    display: 'flex',
     flex: 1,
-    justifyContent: "space-evenly"
+    justifyContent: 'space-evenly',
   },
 }));
 
@@ -68,34 +68,43 @@ export default function LabHome() {
   const classes = useStyles();
 
   return (
-    <Container component='main' maxWidth='xs'>
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Typography component='h1' variant='h5'>
-          Lab Home
-        </Typography>
-        <form className={classes.form} noValidate>
-          <div>
-            <Link to='/poolmapping'>
-              <Button
-                type='collector'
-                fullWidth
-                variant='contained'
-                color='primary'
-                className={classes.submit}
-              >
-                Pool Mapping
-            </Button>
-            </Link>
+    <div>
+      <Header />
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Typography component='h1' variant='h5'>
+            Lab Home
+          </Typography>
+          <form className={classes.form} noValidate>
+            <div>
+              <Link to='/poolmapping'>
+                <Button
+                  type='collector'
+                  fullWidth
+                  variant='contained'
+                  color='primary'
+                  className={classes.submit}
+                >
+                  Pool Mapping
+                </Button>
+              </Link>
 
-            <Link to='/welltesting'>
-              <Button type='lab' fullWidth variant='contained' color='primary' handleClick=''>
-                Well Testing
-            </Button>
-            </Link>
-          </div>
-        </form>
-      </div>
-    </Container>
+              <Link to='/welltesting'>
+                <Button
+                  type='lab'
+                  fullWidth
+                  variant='contained'
+                  color='primary'
+                  handleClick=''
+                >
+                  Well Testing
+                </Button>
+              </Link>
+            </div>
+          </form>
+        </div>
+      </Container>
+    </div>
   );
 }

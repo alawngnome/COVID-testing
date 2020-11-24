@@ -17,16 +17,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-
 //Navbar
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { withRouter } from "react-router-dom";
-
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -49,21 +47,20 @@ const useStyles = makeStyles((theme) => ({
 
   //Navbar CSS
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   headerOptions: {
-    display: "flex",
+    display: 'flex',
     flex: 1,
-    justifyContent: "space-evenly"
+    justifyContent: 'space-evenly',
   },
 }));
-
 
 const Header = (props) => {
   const { history } = props;
@@ -86,46 +83,46 @@ const Header = (props) => {
 
   const menuItems = [
     {
-      menuTitle: "Lab Home",
-      pageURL: "/"
+      menuTitle: 'Lab Home',
+      pageURL: '/labhome',
     },
     {
-      menuTitle: "Pool Mapping",
-      pageURL: "/poolmapping"
+      menuTitle: 'Pool Mapping',
+      pageURL: '/poolmapping',
     },
     {
-      menuTitle: "Well Testing",
-      pageURL: "/welltesting"
-    }
+      menuTitle: 'Well Testing',
+      pageURL: '/welltesting',
+    },
   ];
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position='static'>
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant='h6' className={classes.title}>
             Covid Lab
-            </Typography>
+          </Typography>
           <IconButton
-            edge="start"
+            edge='start'
             className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
+            color='inherit'
+            aria-label='menu'
             onClick={handleMenu}
           >
             <MenuIcon />
           </IconButton>
           <Menu
-            id="menu-appbar"
+            id='menu-appbar'
             anchorEl={anchorEl}
             anchorOrigin={{
-              vertical: "top",
-              horizontal: "right"
+              vertical: 'top',
+              horizontal: 'right',
             }}
             keepMounted
             transformOrigin={{
-              vertical: "top",
-              horizontal: "right"
+              vertical: 'top',
+              horizontal: 'right',
             }}
             open={open}
             onClose={() => setAnchorEl(null)}
@@ -144,6 +141,5 @@ const Header = (props) => {
     </div>
   );
 };
-
 
 export default withRouter(Header);

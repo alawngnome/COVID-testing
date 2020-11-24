@@ -6,6 +6,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
@@ -78,18 +86,22 @@ export default function SignIn() {
             onChange={handlePassword}
           />
           <div>
-            <Button
-              type='collector'
-              fullWidth
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-            >
-              Login Collector
-            </Button>
-            <Button type='lab' fullWidth variant='contained' color='primary'>
-              Lab Login
-            </Button>
+            <Link to='/testcollection'>
+              <Button
+                type='collector'
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+              >
+                Login Collector
+              </Button>
+            </Link>
+            <Link to='/labhome'>
+              <Button type='lab' fullWidth variant='contained' color='primary'>
+                Lab Login
+              </Button>
+            </Link>
           </div>
         </form>
       </div>
