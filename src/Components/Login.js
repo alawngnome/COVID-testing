@@ -66,6 +66,12 @@ export default function SignIn() {
 
   const handleSubmitLogin = (e) => {
     e.preventDefault();
+
+    if(!email.includes("@labuser.com")) {
+      alert("Not a valid lab employee! Please login through the other page.");
+      return;
+    }
+
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
