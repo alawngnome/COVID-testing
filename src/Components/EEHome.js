@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import { Paper, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchEmployeeHomeData } from '../Firebase/index';
 
@@ -9,14 +9,18 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    fontFamily: 'roboto',
+    fontSize: '1.2em',
+    padding: '20px 20px 20px 20px',
   },
   header: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
     width: '20vw',
     height: '5vh',
-    font: 'roboto',
+    fontFamily: 'roboto',
     fontWeight: '500',
     fontSize: '1.2em',
   },
@@ -30,6 +34,7 @@ const useStyles = makeStyles({
     marginTop: '2vh',
     display: 'flex',
     justifyContent: 'center',
+    border: 'solid #C0C0C0',
   },
   gridItem: {
     backgroundColor: '#002984',
@@ -39,9 +44,10 @@ const useStyles = makeStyles({
     direction: 'row',
   },
   gridItemPart: {
-    font: 'roboto',
+    fontFamily: 'roboto',
     fontSize: '1.1em',
     color: 'white',
+    border: 'solid #C0C0C0 ',
   },
   text: {
     textAlign: 'center',
@@ -78,7 +84,10 @@ export default function EEHome() {
   }
   return (
     <div>
-      <h2 className={classes.root}>Employee Home</h2>
+      <div className={classes.root}>
+        <Paper>Employee Home</Paper>
+      </div>
+      {/* <h2 className={classes.root}>Employee Home</h2> */}
       <Grid className={classes.gridRoot} container>
         <Grid className={classes.gridItem} item xs={12}>
           <Grid className={classes.gridItemPart} item xs={6}>
