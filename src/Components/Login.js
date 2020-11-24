@@ -9,7 +9,7 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
-import firebase from '../firebase';
+import firebase from '../Firebase/firebaseSetup'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
