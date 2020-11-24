@@ -6,11 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
-import firebase from '../Firebase/firebaseSetup'
-
+import firebase from '../Firebase/firebaseSetup';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -100,16 +100,29 @@ export default function SignIn() {
             onChange={handlePassword}
           />
           <div>
-            <Button
-              type='collector'
-              fullWidth
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-              onClick={handleSubmit}
-            >
-              Login
-            </Button>
+            <Link to='/eehome'>
+              <Button
+                type='collector'
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+                onClick={handleSubmit}
+              >
+                Login
+              </Button>
+            </Link>
+            <Link to='/'>
+              <Button
+                type='collector'
+                fullWidth
+                variant='contained'
+                color='secondary'
+                className={classes.submit}
+              >
+                Go Back
+              </Button>
+            </Link>
           </div>
         </form>
       </div>

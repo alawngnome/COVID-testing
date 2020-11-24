@@ -1,22 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
-
 import firebase from '../Firebase/firebaseSetup';
 
 const useStyles = makeStyles((theme) => ({
@@ -122,6 +113,17 @@ export default function SignIn() {
             <Link to='/labhome'>
               <Button type='lab' fullWidth variant='contained' color='primary'>
                 Lab Login
+              </Button>
+            </Link>
+            <Link to='/eelogin'>
+              <Button
+                type='lab'
+                fullWidth
+                variant='contained'
+                color='secondary'
+                className={classes.submit}
+              >
+                Employee Login
               </Button>
             </Link>
           </div>
