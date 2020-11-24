@@ -17,6 +17,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
+import firebase from '../Firebase/firebaseSetup';
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -50,6 +52,25 @@ export default function SignIn() {
 
   const handlePassword = (event) => {
     setPassword(event.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        window.location.href = '/profile';
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+      });
   };
 
   return (
@@ -93,6 +114,7 @@ export default function SignIn() {
                 variant='contained'
                 color='primary'
                 className={classes.submit}
+                onClick={handleSubmit}
               >
                 Login Collector
               </Button>
