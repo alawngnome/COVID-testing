@@ -17,12 +17,12 @@ function App() {
   return (
     <div className={classes.container}>
       <BrowserRouter>
-      <Header />
-      <Switch>
-        <Route path="/"  component = {LabHome}/>
-        <Route path="/poolmapping"  component = {PoolMapping}/>
-        <Route path="/welltesting" component = {WellTesting} />
-      </Switch>
+        <Header />
+        <Switch>
+          <Route exact path="/" component={LabHome} />
+          <Route path="/poolmapping" component={PoolMapping} />
+          <Route path="/welltesting" component={WellTesting} />
+        </Switch>
       </BrowserRouter>
     </div>
   );

@@ -76,18 +76,23 @@ export default function LabHome() {
         </Typography>
         <form className={classes.form} noValidate>
           <div>
-            <Button
-              type='collector'
-              fullWidth
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-            >
-              Pool Mapping
+            <Link to='/poolmapping'>
+              <Button
+                type='collector'
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+              >
+                Pool Mapping
             </Button>
-            <Button type='lab' fullWidth variant='contained' color='primary'>
-              Well Testing
+            </Link>
+
+            <Link to='/welltesting'>
+              <Button type='lab' fullWidth variant='contained' color='primary' handleClick=''>
+                Well Testing
             </Button>
+            </Link>
           </div>
         </form>
       </div>
