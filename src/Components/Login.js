@@ -45,13 +45,32 @@ export default function SignIn() {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmitCollector = (e) => {
     e.preventDefault();
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        window.location.href = '/profile';
+        window.location.href = '/testcollection';
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+      });
+  };
+
+  const handleSubmitLogin = (e) => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        window.location.href = '/labhome';
       })
       .catch(function (error) {
         var errorCode = error.code;
@@ -105,13 +124,13 @@ export default function SignIn() {
                 variant='contained'
                 color='primary'
                 className={classes.submit}
-                onClick={handleSubmit}
+                onClick={handleSubmitCollector}
               >
                 Login Collector
               </Button>
             </Link>
             <Link to='/labhome'>
-              <Button type='lab' fullWidth variant='contained' color='primary'>
+              <Button type='lab' fullWidth variant='contained' color='primary' onClick={handleSubmitLogin}>
                 Lab Login
               </Button>
             </Link>
