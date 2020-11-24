@@ -6,7 +6,7 @@ import PoolMapping from './Components/PoolMapping';
 
 function App() {
   //return <TestCollection />;
-  //return <LabHome />;
+  return <LabHome />;
   //return <WellTesting />;
   //return <Login />;
   //return <EELogin />;
