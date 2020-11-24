@@ -107,6 +107,13 @@ const useStyles = makeStyles({
   button: {
     marginTop: '2vh',
   },
+
+  // grid at the bottom for buttons edit and delete
+  buttonGrid: {
+    display: 'flex',
+    direction: 'row',
+    justifyContent: 'center',
+  },
 });
 
 // component
@@ -193,6 +200,22 @@ function PoolMapping() {
       }
     });
     setPoolEntries(tempEntries);
+  };
+  // edit only works for one checked box - do not dare check more than one box
+  const handleEditPoolEntries = () => {
+    let tempEditEntry = poolEntries.filter((entry) => entry.checked);
+    let tempEntries = poolEntries.filter((entry) => !entry.checked);
+    setPoolEntries(tempEntries); // getting rid of the entry to be edited
+    setPoolBarcode(tempEditEntry[0].poolBarcode);
+    let barCodeArr = tempEditEntry[0].testBarcode.split(',');
+    let tempInput = {};
+    for (let i = 0; i < barCodeArr.length; i++) {
+      tempInput = {
+        ...tempInput,
+        [i + 1]: barCodeArr[i],
+      };
+    }
+    setInputBarcode(tempInput);
   };
 
   const handleDeletePoolEntries = () => {
@@ -295,16 +318,31 @@ function PoolMapping() {
           </Grid>
         ))}
       </Grid>
-
-      {/* final delete button */}
-      <Button
-        variant='contained'
-        color='secondary'
-        className={classes.button}
-        onClick={handleDeletePoolEntries}
-      >
-        Delete
-      </Button>
+      {/* Grid for containing edit, delete buttons */}
+      <Grid container className={classes.buttonGrid} spacing={2}>
+        <Grid item>
+          {/* Edit Button */}
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={handleEditPoolEntries}
+          >
+            Edit
+          </Button>
+        </Grid>
+        <Grid item>
+          {/* final delete button */}
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={handleDeletePoolEntries}
+          >
+            Delete
+          </Button>
+        </Grid>
+      </Grid>
     </Container>
   );
 }
