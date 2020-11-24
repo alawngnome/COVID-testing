@@ -103,11 +103,36 @@ function WellTesting() {
       console.log('One of the fields are empty.');
       return;
     }
-    entries.push({ wellBarcode, poolBarcode, result });
-    setEntries(entries);
-    setWellBarcode('');
-    setPoolBarcode('');
-    setResult('');
+    fetchPools().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        let data = doc.data();
+        let docWellBarcode = data.wellBarcode;
+        let docPoolBarcode = data.poolBarcode;
+        if (docWellBarcode == '' && poolBarcode == docPoolBarcode) {
+          doc.ref.set({ wellBarcode: wellBarcode }, { merge: true });
+          fetchPools().then((snapshot) => {
+            let tempEntries = [];
+            snapshot.forEach((doc) => {
+              let data = doc.data();
+              let wellBarcode = data.wellBarcode;
+              let poolBarcode = data.poolBarcode;
+              let result = data.result;
+              if (wellBarcode != '')
+                tempEntries.push({ wellBarcode, poolBarcode, result });
+            });
+            setEntries(tempEntries);
+            setLoading(false);
+          });
+        } else {
+          console.log(
+            'Well barcode already exists or Pool barcode does not exist.'
+          );
+        }
+      });
+      setWellBarcode('');
+      setPoolBarcode('');
+      setResult('');
+    });
   };
 
   // For reading from Firestore
@@ -119,7 +144,8 @@ function WellTesting() {
         let wellBarcode = data.wellBarcode;
         let poolBarcode = data.poolBarcode;
         let result = data.result;
-        tempEntries.push({ wellBarcode, poolBarcode, result });
+        if (wellBarcode != '')
+          tempEntries.push({ wellBarcode, poolBarcode, result });
       });
       setEntries(tempEntries);
       setLoading(false);
