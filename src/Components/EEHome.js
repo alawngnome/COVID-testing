@@ -59,15 +59,14 @@ export default function EEHome() {
       <Grid className={classes.gridRoot} container>
         <Grid className={classes.gridItem} item xs={12}>
           <Grid className={classes.gridItemPart} item xs={6}>
-            <p className={classes.text}>Employee ID</p>
+            <p className={classes.text}>Collection Date</p>
           </Grid>
           <Grid className={classes.gridItemPart} item xs={6}>
-            <p className={classes.text}>Test Barcode</p>
+            <p className={classes.text}>Result</p>
           </Grid>
         </Grid>
         {entries.map((entry) => (
           <Grid className={classes.gridItem} item xs={12} key={entry.id}>
-            {/*no need for a checkbox */}
             <Grid className={classes.gridItemPart} item xs={5}>
               <p className={classes.text} style={{ marginRight: '6vw' }}>
                 {entry.id}
