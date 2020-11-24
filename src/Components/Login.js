@@ -6,8 +6,18 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
+
+import firebase from '../Firebase/firebaseSetup';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,6 +54,25 @@ export default function SignIn() {
     setPassword(event.target.value);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        window.location.href = '/profile';
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+      });
+  };
+
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
@@ -78,18 +107,23 @@ export default function SignIn() {
             onChange={handlePassword}
           />
           <div>
-            <Button
-              type='collector'
-              fullWidth
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-            >
-              Login Collector
-            </Button>
-            <Button type='lab' fullWidth variant='contained' color='primary'>
-              Lab Login
-            </Button>
+            <Link to='/testcollection'>
+              <Button
+                type='collector'
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+                onClick={handleSubmit}
+              >
+                Login Collector
+              </Button>
+            </Link>
+            <Link to='/labhome'>
+              <Button type='lab' fullWidth variant='contained' color='primary'>
+                Lab Login
+              </Button>
+            </Link>
           </div>
         </form>
       </div>

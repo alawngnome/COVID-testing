@@ -9,6 +9,9 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
+import firebase from '../Firebase/firebaseSetup'
+
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -30,25 +33,44 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
-    const classes = useStyles();
-    const history = useHistory();
-  
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-  
-    const handleLogin = (event) => {
-      setEmail(event.target.value);
-    };
-  
-    const handlePassword = (event) => {
-      setPassword(event.target.value);
-    };
+  const classes = useStyles();
+  const history = useHistory();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        window.location.href = '/eehome';
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+      });
+  };
 
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
-      <Avatar className={classes.avatar}>{/*<LockOutlinedIcon /> */}</Avatar>
+        <Avatar className={classes.avatar}>{/*<LockOutlinedIcon /> */}</Avatar>
         <Typography component='h1' variant='h5'>
           Employee Login
         </Typography>
@@ -84,6 +106,7 @@ export default function SignIn() {
               variant='contained'
               color='primary'
               className={classes.submit}
+              onClick={handleSubmit}
             >
               Login
             </Button>

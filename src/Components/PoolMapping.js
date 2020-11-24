@@ -10,6 +10,8 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Header from './Navbar';
+
 // styles
 const useStyles = makeStyles({
   root: {
@@ -107,6 +109,13 @@ const useStyles = makeStyles({
   button: {
     marginTop: '2vh',
   },
+
+  // grid at the bottom for buttons edit and delete
+  buttonGrid: {
+    display: 'flex',
+    direction: 'row',
+    justifyContent: 'center',
+  },
 });
 
 // component
@@ -194,6 +203,22 @@ function PoolMapping() {
     });
     setPoolEntries(tempEntries);
   };
+  // edit only works for one checked box - do not dare check more than one box
+  const handleEditPoolEntries = () => {
+    let tempEditEntry = poolEntries.filter((entry) => entry.checked);
+    let tempEntries = poolEntries.filter((entry) => !entry.checked);
+    setPoolEntries(tempEntries); // getting rid of the entry to be edited
+    setPoolBarcode(tempEditEntry[0].poolBarcode);
+    let barCodeArr = tempEditEntry[0].testBarcode.split(',');
+    let tempInput = {};
+    for (let i = 0; i < barCodeArr.length; i++) {
+      tempInput = {
+        ...tempInput,
+        [i + 1]: barCodeArr[i],
+      };
+    }
+    setInputBarcode(tempInput);
+  };
 
   const handleDeletePoolEntries = () => {
     let tempEntries = poolEntries.filter((entry) => !entry.checked);
@@ -201,111 +226,129 @@ function PoolMapping() {
   };
 
   return (
-    <Container className={classes.root}>
-      {/* header */}
-      <Paper className={classes.header}>Pool Mapping</Paper>
-      <TextField
-        className={classes.textField}
-        id='outlined-basic'
-        label='Pool barcode'
-        variant='outlined'
-        size='small'
-        value={poolBarcode}
-        onChange={handlePoolBarcode}
-      />
-      {/* subheader */}
-      <Paper className={classes.subheader}>Test Barcodes</Paper>
+    <div>
+      <Header />
+      <Container className={classes.root}>
+        {/* header */}
+        <Paper className={classes.header}>Pool Mapping</Paper>
+        <TextField
+          className={classes.textField}
+          id='outlined-basic'
+          label='Pool barcode'
+          variant='outlined'
+          size='small'
+          value={poolBarcode}
+          onChange={handlePoolBarcode}
+        />
+        {/* subheader */}
+        <Paper className={classes.subheader}>Test Barcodes</Paper>
 
-      {/* First Grid Containing all the test barcode entries */}
-      <Grid className={classes.gridRoot} container>
-        {rows.map((row) => (
-          <Grid item className={classes.gridItem} key={row} xs={12}>
-            <Grid item xs={8}>
-              <TextField
-                variant='outlined'
-                size='small'
-                onChange={(e) => handleBarcode(e, row)}
-                value={inputBarcode[row] ? inputBarcode[row] : ''} // if barcode is empty, value is '', otherwise value is inputBarcode[row]
-              >
-                {' '}
-              </TextField>
+        {/* First Grid Containing all the test barcode entries */}
+        <Grid className={classes.gridRoot} container>
+          {rows.map((row) => (
+            <Grid item className={classes.gridItem} key={row} xs={12}>
+              <Grid item xs={8}>
+                <TextField
+                  variant='outlined'
+                  size='small'
+                  onChange={(e) => handleBarcode(e, row)}
+                  value={inputBarcode[row] ? inputBarcode[row] : ''} // if barcode is empty, value is '', otherwise value is inputBarcode[row]
+                >
+                  {' '}
+                </TextField>
+              </Grid>
+              {/* delete button for each test barcode entry */}
+              <Grid item xs={4}>
+                <Button
+                  className={classes.deleteButton}
+                  variant='contained'
+                  color='secondary'
+                  onClick={() => handleDelete(row)}
+                >
+                  Delete
+                </Button>
+              </Grid>
             </Grid>
-            {/* delete button for each test barcode entry */}
-            <Grid item xs={4}>
-              <Button
-                className={classes.deleteButton}
-                variant='contained'
-                color='secondary'
-                onClick={() => handleDelete(row)}
-              >
-                Delete
-              </Button>
+          ))}
+        </Grid>
+
+        {/* handle more rows button */}
+        <Button
+          className={classes.addRowButton}
+          variant='contained'
+          color='primary'
+          onClick={handleMoreRows}
+        >
+          Add More Rows
+        </Button>
+
+        {/* submit pool button */}
+        <Button variant='contained' color='primary' onClick={handleSubmit}>
+          Submit Pool
+        </Button>
+
+        {/* second grid containing submitted pool entries */}
+        <Grid className={classes.gridRoot2} container>
+          {/* header for second grid */}
+          <Grid className={classes.gridItem2} item xs={12}>
+            <Grid className={classes.gridItemPart} item xs={6}>
+              <p className={classes.text}>Pool ID</p>
+            </Grid>
+            <Grid className={classes.gridItemPart} item xs={6}>
+              <p className={classes.text}>Test Barcodes</p>
             </Grid>
           </Grid>
-        ))}
-      </Grid>
+          {/* map the poolEntries and put in each entry */}
+          {poolEntries.map((entry) => (
+            <Grid
+              className={classes.gridItem2}
+              item
+              xs={12}
+              key={entry.poolBarcode}
+            >
+              <Grid className={classes.checkbox} item xs={1}>
+                <Checkbox value={entry.poolBarcode} onChange={handleChecked} />
+              </Grid>
 
-      {/* handle more rows button */}
-      <Button
-        className={classes.addRowButton}
-        variant='contained'
-        color='primary'
-        onClick={handleMoreRows}
-      >
-        Add More Rows
-      </Button>
+              <Grid className={classes.gridItemPart} item xs={5}>
+                <p className={classes.text} style={{ marginRight: '6vw' }}>
+                  {entry.poolBarcode}
+                </p>
+              </Grid>
 
-      {/* submit pool button */}
-      <Button variant='contained' color='primary' onClick={handleSubmit}>
-        Submit Pool
-      </Button>
-
-      {/* second grid containing submitted pool entries */}
-      <Grid className={classes.gridRoot2} container>
-        {/* header for second grid */}
-        <Grid className={classes.gridItem2} item xs={12}>
-          <Grid className={classes.gridItemPart} item xs={6}>
-            <p className={classes.text}>Pool ID</p>
+              <Grid className={classes.gridItemPart} item xs={6}>
+                <p className={classes.text}>{entry.testBarcode}</p>
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+        {/* Grid for containing edit, delete buttons */}
+        <Grid container className={classes.buttonGrid} spacing={2}>
+          <Grid item>
+            {/* Edit Button */}
+            <Button
+              variant='contained'
+              color='secondary'
+              className={classes.button}
+              onClick={handleEditPoolEntries}
+            >
+              Edit
+            </Button>
           </Grid>
-          <Grid className={classes.gridItemPart} item xs={6}>
-            <p className={classes.text}>Test Barcodes</p>
+          <Grid item>
+            {/* final delete button */}
+            <Button
+              variant='contained'
+              color='secondary'
+              className={classes.button}
+              onClick={handleDeletePoolEntries}
+            >
+              Delete
+            </Button>
           </Grid>
         </Grid>
-        {/* map the poolEntries and put in each entry */}
-        {poolEntries.map((entry) => (
-          <Grid
-            className={classes.gridItem2}
-            item
-            xs={12}
-            key={entry.poolBarcode}
-          >
-            <Grid className={classes.checkbox} item xs={1}>
-              <Checkbox value={entry.poolBarcode} onChange={handleChecked} />
-            </Grid>
-
-            <Grid className={classes.gridItemPart} item xs={5}>
-              <p className={classes.text} style={{ marginRight: '6vw' }}>
-                {entry.poolBarcode}
-              </p>
-            </Grid>
-
-            <Grid className={classes.gridItemPart} item xs={6}>
-              <p className={classes.text}>{entry.testBarcode}</p>
-            </Grid>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* final delete button */}
-      <Button
-        variant='contained'
-        color='secondary'
-        className={classes.button}
-        onClick={handleDeletePoolEntries}
-      >
-        Delete
-      </Button>
-    </Container>
+      </Container>
+    </div>
   );
 }
 
