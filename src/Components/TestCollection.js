@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -8,6 +8,8 @@ import {
   Checkbox,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+import firebase from '../Firebase/firebaseSetup';
 
 // styles
 const useStyles = makeStyles({
@@ -59,10 +61,21 @@ const useStyles = makeStyles({
 function TestCollection() {
   const classes = useStyles();
 
+  const db = firebase.firestore();
+
   // states
   const [id, setId] = useState('');
   const [testBarcode, setTestBarcode] = useState('');
   const [entries, setEntries] = useState([]);
+
+  // useEffect(() => {
+  //   let ref = db.collection('Employees');
+  //   ref.get().then((snapshot) => {
+  //     snapshot.forEach((doc) => {
+  //       console.log(doc.data().testCollection);
+  //     });
+  //   });
+  // });
 
   // handle state functions
 
@@ -74,17 +87,50 @@ function TestCollection() {
     setTestBarcode(e.target.value);
   };
 
-  const handleAdd = () => {
-    const newTest = {
-      id,
-      testBarcode,
-      checked: false,
-    };
-    let tempEntries = entries;
-    tempEntries.push(newTest);
-    setEntries(tempEntries);
-    setId('');
-    setTestBarcode('');
+  const handleAdd = async () => {
+    let validId = false;
+    let docRef;
+    let ref = db.collection('Employees');
+    let docRef2;
+    await ref.get().then((snapshot) => {
+      docRef2 = snapshot.docs[0].ref.id;
+      snapshot.forEach((doc) => {
+        if (id === doc.data().ID) {
+          validId = true;
+          docRef = doc;
+        }
+      });
+    });
+    if (!validId) alert('Employee Id is not valid');
+    else {
+      // const newTest = {
+      //   id,
+      //   testBarcode,
+      //   checked: false,
+      // };
+      // let tempEntries = entries;
+      // tempEntries.push(newTest);
+      // setEntries(tempEntries);
+      // setId('');
+      // setTestBarcode('');
+      let testCollection = docRef.data().testCollection;
+      let addRef = ref.doc(docRef2);
+      await addRef.set(
+        {
+          ID: id,
+          testCollection: [
+            ...testCollection,
+            (testCollection[testCollection.length] = {
+              collectionTime: new Date().toISOString().slice(0, 10),
+              result: 'in progress',
+              testBarcode: testBarcode,
+              checked: false,
+            }),
+          ],
+        },
+        { merge: true }
+      );
+    }
   };
 
   const handleDelete = () => {
