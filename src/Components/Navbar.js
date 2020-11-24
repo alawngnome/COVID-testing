@@ -87,7 +87,7 @@ import {
     const menuItems = [
       {
         menuTitle: "Lab Home",
-        pageURL: "/labhome"
+        pageURL: "/"
       },
       {
         menuTitle: "Pool Mapping",
@@ -104,7 +104,7 @@ import {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
-              Photos
+              Covid Lab
             </Typography>
             <IconButton
               edge="start"

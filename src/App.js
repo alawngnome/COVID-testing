@@ -19,7 +19,7 @@ function App() {
       <BrowserRouter>
       <Header />
       <Switch>
-        <Route path="/labhome"  component = {LabHome}/>
+        <Route path="/"  component = {LabHome}/>
         <Route path="/poolmapping"  component = {PoolMapping}/>
         <Route path="/welltesting" component = {WellTesting} />
       </Switch>
