@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { fetchEmployeeHomeData } from '../Firebase/index';
 
 const useStyles = makeStyles({
   root: {
@@ -52,10 +53,27 @@ export default function EEHome() {
 
   const [entries, setEntries] = useState([]);
 
+  let id = '';
+  let date = '';
+  let result = '';
+
+  useEffect(() => {
+    fetchEmployeeHomeData().then((data) => {
+      let document = [];
+      for (let i = 0; i < data.testCollection.length; i++) {
+        console.log(data.testCollection[i]);
+        id = data.testCollection[i].ID;
+        date = data.testCollection[i].collectionTime;
+        result = data.testCollection[i].result;
+        document.push({ id, date, result });
+      }
+      setEntries(document);
+    });
+  }, []);
+
   return (
     <div>
       <h2 className={classes.root}>Employee Home</h2>
-
       <Grid className={classes.gridRoot} container>
         <Grid className={classes.gridItem} item xs={12}>
           <Grid className={classes.gridItemPart} item xs={6}>
@@ -67,13 +85,11 @@ export default function EEHome() {
         </Grid>
         {entries.map((entry) => (
           <Grid className={classes.gridItem} item xs={12} key={entry.id}>
-            <Grid className={classes.gridItemPart} item xs={5}>
-              <p className={classes.text} style={{ marginRight: '6vw' }}>
-                {entry.id}
-              </p>
+            <Grid className={classes.gridItemPart} item xs={6}>
+              <p className={classes.text}>{entry.date}</p>
             </Grid>
             <Grid className={classes.gridItemPart} item xs={6}>
-              <p className={classes.text}>{entry.testBarcode}</p>
+              <p className={classes.text}>{entry.result}</p>
             </Grid>
           </Grid>
         ))}

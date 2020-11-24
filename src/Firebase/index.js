@@ -20,4 +20,12 @@ let db = firebase.firestore();
 
 // WellTesting functions
 
+export const fetchEmployeeHomeData = async () => {
+  const doc = await db
+    .collection('Employees')
+    .doc('48qVcSNDDsbAUNZbWbm4pBU792h1')
+    .get(); // Returns user data based on uid
+  return doc.data();
+};
+
 export default firebase;

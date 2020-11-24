@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 
-import firebase from '../Firebase/firebaseSetup';
+import firebase from '../Firebase/index';
 
 const useStyles = makeStyles((theme) => ({
   paper: {

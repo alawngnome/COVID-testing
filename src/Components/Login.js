@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
-import firebase from '../Firebase/firebaseSetup';
+import firebase from '../Firebase/index';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,11 +48,11 @@ export default function SignIn() {
   const handleSubmitCollector = (e) => {
     e.preventDefault();
 
-    if(!email.includes("@labuser.com")) {
-      alert("Not a valid lab employee! Please login through the other page.");
+    if (!email.includes('@labuser.com')) {
+      alert('Not a valid lab employee! Please login through the other page.');
       return;
     }
-    
+
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -73,8 +73,8 @@ export default function SignIn() {
   const handleSubmitLogin = (e) => {
     e.preventDefault();
 
-    if(!email.includes("@labuser.com")) {
-      alert("Not a valid lab employee! Please login through the other page.");
+    if (!email.includes('@labuser.com')) {
+      alert('Not a valid lab employee! Please login through the other page.');
       return;
     }
 
@@ -142,7 +142,13 @@ export default function SignIn() {
               </Button>
             </Link>
             <Link to='/labhome'>
-              <Button type='lab' fullWidth variant='contained' color='primary' onClick={handleSubmitLogin}>
+              <Button
+                type='lab'
+                fullWidth
+                variant='contained'
+                color='primary'
+                onClick={handleSubmitLogin}
+              >
                 Lab Login
               </Button>
             </Link>
