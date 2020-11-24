@@ -48,32 +48,61 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
   },
+  gridHeaderText: {
+    backgroundColor: '#0998F2',
+    color: 'white',
+    fontSize: '1.0em',
+    fontWeight: '400',
+    textAlign: 'center',
+    padding: '2vh',
+  },
   gridItem: {
-    backgroundColor: '#002984',
     minHeight: '5vh',
-    display: 'flex',
-    alignItems: 'center',
-    direction: 'row',
+    padding: '2vh',
   },
   gridItemPart: {
-    font: 'Roboto',
-    fontSize: '1.1em',
+    fontFamily: 'Roboto',
+    fontSize: '1.5em',
+    fontWeight: '1000',
     color: 'white',
   },
   text: {
+    backgroundColor: 'gray',
+    color: 'white',
+    fontSize: '1.0em',
+    fontWeight: '400',
     textAlign: 'center',
+    padding: '2vh',
   },
 });
 
 function WellTesting() {
   const classes = useStyles();
 
-  const [wellBarcode, setWellBarcode] = useState(0);
-  const [pollBarcode, setPollBarcode] = useState(0);
+  const [wellBarcode, setWellBarcode] = useState('');
+  const [poolBarcode, setPoolBarcode] = useState('');
   const [result, setResult] = useState('');
+  const [entries, setEntries] = useState([]);
 
-  const handleSelect = (event) => {
+  const handleChangeWellBarcode = (event) => {
+    setWellBarcode(event.target.value);
+  };
+  const handleChangePoolBarcode = (event) => {
+    setPoolBarcode(event.target.value);
+  };
+  const handleChangeResult = (event) => {
     setResult(event.target.value);
+  };
+  const handleAdd = () => {
+    if (wellBarcode === '' || poolBarcode === '' || result === '') {
+      console.log('One of the fields are empty.');
+      return;
+    }
+    entries.push({ wellBarcode, poolBarcode, result });
+    setEntries(entries);
+    setWellBarcode('');
+    setPoolBarcode('');
+    setResult('');
   };
 
   return (
@@ -90,13 +119,17 @@ function WellTesting() {
           variant='outlined'
           label='Well barcode:'
           size='small'
+          onChange={handleChangeWellBarcode}
+          value={wellBarcode || ''}
         />
         <TextField
           className={classes.textField}
-          id='pollBarcodeField'
+          id='poolBarcodeField'
           variant='outlined'
-          label='Poll barcode:'
+          label='Pool barcode:'
           size='small'
+          onChange={handleChangePoolBarcode}
+          value={poolBarcode || ''}
         />
         <FormControl className={classes.formControl} variant='outlined'>
           <InputLabel id='resultSelect'>Result</InputLabel>
@@ -104,14 +137,51 @@ function WellTesting() {
             labelId='resultSelect'
             label='Result'
             id='resultSelect'
-            onChange={handleSelect}
-            value={result}
+            onChange={handleChangeResult}
+            value={result || ''}
           >
             <MenuItem value={'in progress'}>In progress</MenuItem>
             <MenuItem value={'positive'}>Positive</MenuItem>
             <MenuItem value={'negative'}>Negative</MenuItem>
           </Select>
         </FormControl>
+        <Button
+          variant='contained'
+          color='primary'
+          className={classes.button}
+          onClick={handleAdd}
+        >
+          Add
+        </Button>
+        <Grid className={classes.gridRoot} container>
+          <Grid className={classes.gridItem} container xs={12}>
+            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+              <p className={classes.gridHeaderText}>Well Barcode</p>
+            </Grid>
+            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+              <p className={classes.gridHeaderText}>Pool Barcode</p>
+            </Grid>
+            <Grid className={classes.gridItemPart} item xs={4} elevation={5}>
+              <p className={classes.gridHeaderText}>Result</p>
+            </Grid>
+          </Grid>
+          {entries.map((entry) => (
+            <Grid className={classes.gridItem} container xs={12} spacing={3}>
+              <Grid className={classes.checkbox} item xs={1}>
+                <Checkbox color='primary' />
+              </Grid>
+              <Grid className={classes.gridItemPart} item xs={3}>
+                <Paper className={classes.text}>{entry.wellBarcode}</Paper>
+              </Grid>
+              <Grid className={classes.gridItemPart} item xs={4}>
+                <Paper className={classes.text}>{entry.poolBarcode}</Paper>
+              </Grid>
+              <Grid className={classes.gridItemPart} item xs={4}>
+                <Paper className={classes.text}>{entry.result}</Paper>
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
       </Container>
     </div>
   );
