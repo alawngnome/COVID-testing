@@ -8,9 +8,10 @@ function App() {
   //return <TestCollection />;
   // return <LabHome />;
   // return <WellTesting />;
+  //return <LabHome />;
+  return <WellTesting />;
   //return <Login />;
   //return <EELogin />;
-  return <PoolMapping />;
 }
 
 export default App;
