@@ -22,9 +22,10 @@ function App() {
       } else {
         setUser();
       }
+      unsubscribe();
     });
-    return unsubscribe();
   }, []);
+
   return (
     <div className={classes.container}>
       <BrowserRouter>
