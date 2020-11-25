@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   //Navbar CSS
   root: {
     flexGrow: 1,
+    marginBottom: '2vh',
   },
   menuButton: {
     marginRight: theme.spacing(2),
