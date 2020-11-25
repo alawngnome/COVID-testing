@@ -85,7 +85,7 @@ function TestCollection() {
       });
     });
     setEntries(tempEntries);
-  }, [entries]);
+  }, [db.collection('Employees')]);
 
   // handle state functions
 
