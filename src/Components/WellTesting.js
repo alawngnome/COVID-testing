@@ -90,6 +90,27 @@ function WellTesting() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const updateData = () => {
+    fetchPools().then((snapshot) => {
+      let tempEntries = [];
+      snapshot.forEach((doc) => {
+        let data = doc.data();
+        let wellBarcode = data.wellBarcode;
+        let poolBarcode = data.poolBarcode;
+        let result = data.result;
+        let checked = data.checked;
+        if (wellBarcode != '')
+          tempEntries.push({
+            wellBarcode,
+            poolBarcode,
+            result,
+            checked,
+          });
+      });
+      setEntries(tempEntries);
+      setLoading(false);
+    });
+  };
   const handleChangeWellBarcode = (event) => {
     setWellBarcode(event.target.value);
   };
@@ -103,6 +124,15 @@ function WellTesting() {
     let checkedCount = 0;
     entries.map((entry) => {
       if (entry.wellBarcode === event.target.value) {
+        fetchPools().then((snapshot) => {
+          snapshot.forEach((doc) => {
+            let data = doc.data();
+            let docWellBarcode = data.wellBarcode;
+            if (entry.wellBarcode === docWellBarcode) {
+              doc.ref.set({ checked: event.target.checked }, { merge: true });
+            }
+          });
+        });
         entry.checked = event.target.checked;
       }
       if (entry.checked) {
@@ -124,28 +154,10 @@ function WellTesting() {
         let docWellBarcode = data.wellBarcode;
         let docPoolBarcode = data.poolBarcode;
         if (docWellBarcode == '' && poolBarcode == docPoolBarcode) {
-          doc.ref
-            .set({ wellBarcode: wellBarcode, result: result }, { merge: true })
-            .then(() => {
-              fetchPools().then((snapshot) => {
-                let tempEntries = [];
-                snapshot.forEach((doc) => {
-                  let data = doc.data();
-                  let wellBarcode = data.wellBarcode;
-                  let poolBarcode = data.poolBarcode;
-                  let result = data.result;
-                  if (wellBarcode != '')
-                    tempEntries.push({
-                      wellBarcode,
-                      poolBarcode,
-                      result,
-                      checked: false,
-                    });
-                });
-                setEntries(tempEntries);
-                setLoading(false);
-              });
-            });
+          doc.ref.set(
+            { wellBarcode: wellBarcode, result: result },
+            { merge: true }
+          );
         } else {
           console.log(
             'Well barcode already exists or Pool barcode does not exist.'
@@ -158,36 +170,15 @@ function WellTesting() {
     });
   };
   const handleDelete = () => {
-    let deleteWellBarcodes = [];
-    entries.map((entry) => {
-      if (entry.checked) deleteWellBarcodes.push(entry.wellBarcode);
-    });
+    console.log(entries);
+    let deleteEntries = entries.filter((entry) => entry.checked);
     fetchPools().then((snapshot) => {
       snapshot.forEach((doc) => {
         let data = doc.data();
         let wellBarcode = data.wellBarcode;
-        deleteWellBarcodes.forEach((deleteBarcode) => {
-          if (wellBarcode === deleteBarcode) {
-            doc.ref.set({ wellBarcode: '' }, { merge: true }).then(() => {
-              fetchPools().then((snapshot) => {
-                let tempEntries = [];
-                snapshot.forEach((doc) => {
-                  let data = doc.data();
-                  let wellBarcode = data.wellBarcode;
-                  let poolBarcode = data.poolBarcode;
-                  let result = data.result;
-                  if (wellBarcode != '')
-                    tempEntries.push({
-                      wellBarcode,
-                      poolBarcode,
-                      result,
-                      checked: false,
-                    });
-                });
-                setEntries(tempEntries);
-                setLoading(false);
-              });
-            });
+        deleteEntries.forEach((deleteEntry) => {
+          if (wellBarcode === deleteEntry.wellBarcode) {
+            doc.ref.set({ wellBarcode: '' }, { merge: true });
           }
         });
       });
@@ -196,25 +187,8 @@ function WellTesting() {
 
   // For reading from Firestore
   useEffect(() => {
-    fetchPools().then((snapshot) => {
-      let tempEntries = [];
-      snapshot.forEach((doc) => {
-        let data = doc.data();
-        let wellBarcode = data.wellBarcode;
-        let poolBarcode = data.poolBarcode;
-        let result = data.result;
-        if (wellBarcode != '')
-          tempEntries.push({
-            wellBarcode,
-            poolBarcode,
-            result,
-            checked: false,
-          });
-      });
-      setEntries(tempEntries);
-      setLoading(false);
-    });
-  }, []);
+    updateData();
+  });
 
   if (loading) return null;
   return (
