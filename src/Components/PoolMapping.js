@@ -1,5 +1,5 @@
 // imports
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -132,6 +132,39 @@ function PoolMapping() {
   // Pool entries in the second grid. Each entry is an object {poolBarcode, testBarcode, checked}
   const [poolEntries, setPoolEntries] = useState([]);
 
+  //{0 :  }
+
+  //use effect
+  useEffect(() => {
+    fetchPools().then((snapshot) => {
+      let allPoolEntries = [];
+      let dbpools = [];
+      snapshot.docs.forEach((doc) => {
+        let data = doc.data();
+
+        let testBarcode = '';
+        for (const key in data['testCollection']) {
+          testBarcode += data['testCollection'][key]['testBarcode'] + ',';
+        }
+        if (testBarcode[testBarcode.length - 1] === ',') {
+          testBarcode = testBarcode.substring(0, testBarcode.length - 1);
+        }
+
+        let poolBarcode = data['poolBarcode'];
+
+        let newPoolEntry = {
+          poolBarcode,
+          testBarcode,
+          checked: false
+        };
+
+        allPoolEntries.push(newPoolEntry);
+      });
+
+      setPoolEntries(allPoolEntries);
+    });
+  }, []);
+
   // handle states
   const handlePoolBarcode = (e) => {
     setPoolBarcode(e.target.value); // pool barcode on topmost part of the screen
@@ -152,6 +185,14 @@ function PoolMapping() {
 
   // for deleting individual test barcode entry (first grid)
   const handleDelete = (rowKey) => {
+    let tempInputBarcode = {};
+    for (const key in inputBarcode) {
+      if (key != rowKey) {
+        tempInputBarcode[key] = inputBarcode[key];
+      }
+    }
+    setInputBarcode(tempInputBarcode);
+
     setRows(rows.filter((rowState) => rowKey !== rowState));
   };
 
@@ -165,8 +206,19 @@ function PoolMapping() {
 
   // handles submission
   const handleSubmit = () => {
-    // concatenate all the test barcodes
+    // check for duplicate values
+    let dupSet = new Set();
+    for (const key in inputBarcode) {
+      if (dupSet.has(inputBarcode[key])) {
+        alert('Duplicate test barcodes in the list! Clear duplicate values and submit again.');
+        return;
+      }
+      dupSet.add(inputBarcode[key]);
+    }
 
+    dupSet.clear();
+
+    // concatenate all the test barcodes
     let testBarcode = '';
     for (const key in inputBarcode) {
       testBarcode += inputBarcode[key] + ',';
@@ -197,6 +249,21 @@ function PoolMapping() {
         }
       }
 
+      //Checking if a testBarcode already exists in a pool
+      let processingTestBarcodes = new Set();
+      for (let i = 0; i < dbpools.length; i++) {
+        for(let j = 0; j < dbpools[i]['testCollection'].length; j++) {
+          processingTestBarcodes.add(dbpools[i]['testCollection'][j]['testBarcode']);
+        }
+      }
+
+      for (const key in inputBarcode) {
+        if (processingTestBarcodes.has(inputBarcode[key])) {
+          alert('A test barcode in this pool already exists in another pool!');
+          return;
+        }
+      }
+      
       let usersTests = [];
 
       fetchEmployees().then((snapshot2) => {
@@ -227,7 +294,7 @@ function PoolMapping() {
           "result": "in progress",
           "testCollection": testCollection,
           "wellBarcode": "",
-          "checked" : false
+          "checked": false
         };
 
         let db = firebase.firestore();
@@ -269,6 +336,11 @@ function PoolMapping() {
   const handleEditPoolEntries = () => {
     let tempEditEntry = poolEntries.filter((entry) => entry.checked);
 
+    if (tempEditEntry.length != 1) {
+      alert('Only 1 pool can be edited at once!');
+      return;
+    }
+
     setPoolBarcode(tempEditEntry[0].poolBarcode);
     let barCodeArr = tempEditEntry[0].testBarcode.split(',');
     let tempInput = {};
@@ -293,8 +365,8 @@ function PoolMapping() {
 
       let idsToDelete = new Set();
 
-      for(let i = 0; i < deleteEntries.length; i++) {
-        for(let j = 0; j < dbpools.length; j++) {
+      for (let i = 0; i < deleteEntries.length; i++) {
+        for (let j = 0; j < dbpools.length; j++) {
           if (deleteEntries[i]['poolBarcode'] === dbpools[j].data()['poolBarcode']) {
             idsToDelete.add(dbpools[j]['ref'].id);
           }
@@ -327,8 +399,8 @@ function PoolMapping() {
 
       let idsToDelete = new Set();
 
-      for(let i = 0; i < deleteEntries.length; i++) {
-        for(let j = 0; j < dbpools.length; j++) {
+      for (let i = 0; i < deleteEntries.length; i++) {
+        for (let j = 0; j < dbpools.length; j++) {
           if (deleteEntries[i]['poolBarcode'] === dbpools[j].data()['poolBarcode']) {
             idsToDelete.add(dbpools[j]['ref'].id);
           }
