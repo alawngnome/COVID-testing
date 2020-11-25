@@ -109,7 +109,7 @@ function WellTesting() {
             checked,
           });
       });
-      if (checkedCount > 1) setEditBtnActive(false);
+      if (checkedCount != 1) setEditBtnActive(false);
       else setEditBtnActive(true);
       setEntries(tempEntries);
       setLoading(false);
