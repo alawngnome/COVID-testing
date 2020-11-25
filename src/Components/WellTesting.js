@@ -154,10 +154,13 @@ function WellTesting() {
             { wellBarcode: wellBarcode, result: result },
             { merge: true }
           );
+        } else if (
+          wellBarcode == docWellBarcode &&
+          poolBarcode == docPoolBarcode
+        ) {
+          doc.ref.set({ result: result }, { merge: true });
         } else {
-          console.log(
-            'Well barcode already exists or Pool barcode does not exist.'
-          );
+          console.log('Pool barcode does not exist.');
         }
       });
       setWellBarcode('');
@@ -165,8 +168,13 @@ function WellTesting() {
       setResult('');
     });
   };
+  const handleEdit = () => {
+    let editEntry = entries.filter((entry) => entry.checked)[0];
+    setWellBarcode(editEntry.wellBarcode);
+    setPoolBarcode(editEntry.poolBarcode);
+    setResult(editEntry.result);
+  };
   const handleDelete = () => {
-    console.log(entries);
     let deleteEntries = entries.filter((entry) => entry.checked);
     fetchPools().then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -280,6 +288,7 @@ function WellTesting() {
             color='primary'
             className={classes.button}
             disabled={!editBtnActive}
+            onClick={handleEdit}
           >
             Edit
           </Button>
