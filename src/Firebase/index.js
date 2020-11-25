@@ -19,11 +19,13 @@ firebase.auth();
 let db = firebase.firestore();
 
 // EEHome functions
-export const fetchEmployeeHomeData = async () => {
+export const fetchEmployeeHomeData = async (uid) => {
+  //console.log('the id in index.js is ' + firebase.auth().currentUser.uid);
   const doc = await db
     .collection('Employees')
-    .doc('48qVcSNDDsbAUNZbWbm4pBU792h1')
+    .doc(uid) //(firebase.auth().currentUser.uid)
     .get();
+  //console.log('the id is ' + firebase.auth().currentUser.uid);
   return doc.data();
 };
 

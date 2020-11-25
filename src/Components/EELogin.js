@@ -53,6 +53,7 @@ export default function SignIn() {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
+        console.log('the id in EELogin is ' + firebase.auth().currentUser.uid);
         window.location.href = '/eehome';
       })
       .catch(function (error) {

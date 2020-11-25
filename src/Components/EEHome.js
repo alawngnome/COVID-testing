@@ -54,7 +54,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function EEHome() {
+export default function EEHome({ user }) {
   const classes = useStyles();
 
   const [entries, setEntries] = useState([]);
@@ -65,7 +65,7 @@ export default function EEHome() {
   let result = '';
 
   useEffect(() => {
-    fetchEmployeeHomeData().then((data) => {
+    fetchEmployeeHomeData(user.uid).then((data) => {
       setLoading(false);
       let document = [];
       for (let i = 0; i < data.testCollection.length; i++) {
