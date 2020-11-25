@@ -16,13 +16,13 @@ function App() {
   const classes = useStyles();
   const [user, setUser] = useState();
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    /*const unsubscribe = */firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
       } else {
         setUser();
       }
-      unsubscribe();
+      //unsubscribe();
     });
   }, []);
 

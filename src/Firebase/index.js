@@ -29,6 +29,12 @@ export const fetchEmployeeHomeData = async (uid) => {
   return doc.data();
 };
 
+//Fetch All Employees
+export const fetchEmployees = async () => {
+  const snapshot = await db.collection('Employees').get();
+  return snapshot;
+};
+
 // WellTesting functions
 export const fetchPools = async () => {
   const snapshot = await db.collection('Pool').get();
