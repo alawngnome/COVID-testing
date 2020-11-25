@@ -87,6 +87,7 @@ function WellTesting() {
   const [poolBarcode, setPoolBarcode] = useState('');
   const [result, setResult] = useState('');
   const [editBtnActive, setEditBtnActive] = useState(true);
+  const [deleteBtnActive, setDeleteBtnActive] = useState(true);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -100,7 +101,7 @@ function WellTesting() {
         let poolBarcode = data.poolBarcode;
         let result = data.result;
         let checked = data.checked;
-        if (checked) checkedCount++;
+        if (wellBarcode !== '' && checked) checkedCount++;
         if (wellBarcode !== '')
           tempEntries.push({
             wellBarcode,
@@ -111,6 +112,8 @@ function WellTesting() {
       });
       if (checkedCount != 1) setEditBtnActive(false);
       else setEditBtnActive(true);
+      if (checkedCount == 0) setDeleteBtnActive(false);
+      else setDeleteBtnActive(true);
       setEntries(tempEntries);
       setLoading(false);
     });
@@ -364,6 +367,7 @@ function WellTesting() {
             variant='contained'
             color='primary'
             className={classes.button}
+            disabled={!deleteBtnActive}
             onClick={handleDelete}
           >
             Delete
