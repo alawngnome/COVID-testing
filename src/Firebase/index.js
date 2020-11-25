@@ -35,4 +35,9 @@ export const fetchPools = async () => {
   return snapshot;
 };
 
+export const fetchEmployees = async () => {
+  const snapshot = await db.collection('Employees').get();
+  return snapshot;
+};
+
 export default firebase;
