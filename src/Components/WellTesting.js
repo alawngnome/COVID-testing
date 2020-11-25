@@ -15,7 +15,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import Header from './Navbar';
-import { fetchPools } from '../Firebase/index.js';
+import { fetchPools, fetchEmployees } from '../Firebase/index.js';
 
 const useStyles = makeStyles({
   root: {
@@ -101,7 +101,7 @@ function WellTesting() {
         let result = data.result;
         let checked = data.checked;
         if (checked) checkedCount++;
-        if (wellBarcode != '')
+        if (wellBarcode !== '')
           tempEntries.push({
             wellBarcode,
             poolBarcode,
@@ -149,16 +149,84 @@ function WellTesting() {
         let data = doc.data();
         let docWellBarcode = data.wellBarcode;
         let docPoolBarcode = data.poolBarcode;
-        if (docWellBarcode == '' && poolBarcode == docPoolBarcode) {
+        if (docWellBarcode === '' && poolBarcode === docPoolBarcode) {
+          // Creating new well
           doc.ref.set(
             { wellBarcode: wellBarcode, result: result },
             { merge: true }
           );
+          if (result === 'negative') {
+            let negEmployees = [];
+            let testCollection = data.testCollection;
+            testCollection.forEach((collection) => {
+              negEmployees.push({
+                employeeID: collection.employeeID,
+                testBarcode: collection.testBarcode,
+              });
+            });
+            fetchEmployees().then((snapshot) => {
+              snapshot.forEach((doc) => {
+                let data = doc.data();
+                negEmployees.forEach((employee) => {
+                  if (employee.employeeID === data.ID) {
+                    let docTestCollection = data.testCollection;
+                    for (let i = 0; i < docTestCollection.length; i++) {
+                      if (
+                        docTestCollection[i].testBarcode ===
+                        employee.testBarcode
+                      ) {
+                        docTestCollection[i].result = 'negative';
+                      }
+                    }
+                    console.log(docTestCollection);
+                    doc.ref.set(
+                      { testCollection: docTestCollection },
+                      { merge: true }
+                    );
+                  }
+                });
+              });
+            });
+          }
         } else if (
-          wellBarcode == docWellBarcode &&
-          poolBarcode == docPoolBarcode
+          // Editing existing well
+          wellBarcode === docWellBarcode &&
+          poolBarcode === docPoolBarcode
         ) {
           doc.ref.set({ result: result }, { merge: true });
+          if (result === 'negative') {
+            let negEmployees = [];
+            let testCollection = data.testCollection;
+            testCollection.forEach((collection) => {
+              negEmployees.push({
+                employeeID: collection.employeeID,
+                testBarcode: collection.testBarcode,
+              });
+            });
+            fetchEmployees().then((snapshot) => {
+              snapshot.forEach((doc) => {
+                let data = doc.data();
+                negEmployees.forEach((employee) => {
+                  if (employee.employeeID === data.ID) {
+                    let docTestCollection = data.testCollection;
+                    for (let i = 0; i < docTestCollection.length; i++) {
+                      if (
+                        docTestCollection[i].testBarcode ===
+                        employee.testBarcode
+                      ) {
+                        docTestCollection[i].result = 'negative';
+                      }
+                    }
+                    console.log(docTestCollection);
+                    doc.ref.set(
+                      { testCollection: docTestCollection },
+                      { merge: true }
+                    );
+                  }
+                });
+              });
+            });
+          }
         } else {
           console.log('Pool barcode does not exist.');
         }
