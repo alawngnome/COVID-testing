@@ -124,28 +124,28 @@ function WellTesting() {
         let docWellBarcode = data.wellBarcode;
         let docPoolBarcode = data.poolBarcode;
         if (docWellBarcode == '' && poolBarcode == docPoolBarcode) {
-          doc.ref.set(
-            { wellBarcode: wellBarcode, result: result },
-            { merge: true }
-          );
-          fetchPools().then((snapshot) => {
-            let tempEntries = [];
-            snapshot.forEach((doc) => {
-              let data = doc.data();
-              let wellBarcode = data.wellBarcode;
-              let poolBarcode = data.poolBarcode;
-              let result = data.result;
-              if (wellBarcode != '')
-                tempEntries.push({
-                  wellBarcode,
-                  poolBarcode,
-                  result,
-                  checked: false,
+          doc.ref
+            .set({ wellBarcode: wellBarcode, result: result }, { merge: true })
+            .then(() => {
+              fetchPools().then((snapshot) => {
+                let tempEntries = [];
+                snapshot.forEach((doc) => {
+                  let data = doc.data();
+                  let wellBarcode = data.wellBarcode;
+                  let poolBarcode = data.poolBarcode;
+                  let result = data.result;
+                  if (wellBarcode != '')
+                    tempEntries.push({
+                      wellBarcode,
+                      poolBarcode,
+                      result,
+                      checked: false,
+                    });
                 });
+                setEntries(tempEntries);
+                setLoading(false);
+              });
             });
-            setEntries(tempEntries);
-            setLoading(false);
-          });
         } else {
           console.log(
             'Well barcode already exists or Pool barcode does not exist.'
@@ -155,6 +155,42 @@ function WellTesting() {
       setWellBarcode('');
       setPoolBarcode('');
       setResult('');
+    });
+  };
+  const handleDelete = () => {
+    let deleteWellBarcodes = [];
+    entries.map((entry) => {
+      if (entry.checked) deleteWellBarcodes.push(entry.wellBarcode);
+    });
+    fetchPools().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        let data = doc.data();
+        let wellBarcode = data.wellBarcode;
+        deleteWellBarcodes.forEach((deleteBarcode) => {
+          if (wellBarcode === deleteBarcode) {
+            doc.ref.set({ wellBarcode: '' }, { merge: true }).then(() => {
+              fetchPools().then((snapshot) => {
+                let tempEntries = [];
+                snapshot.forEach((doc) => {
+                  let data = doc.data();
+                  let wellBarcode = data.wellBarcode;
+                  let poolBarcode = data.poolBarcode;
+                  let result = data.result;
+                  if (wellBarcode != '')
+                    tempEntries.push({
+                      wellBarcode,
+                      poolBarcode,
+                      result,
+                      checked: false,
+                    });
+                });
+                setEntries(tempEntries);
+                setLoading(false);
+              });
+            });
+          }
+        });
+      });
     });
   };
 
@@ -281,6 +317,7 @@ function WellTesting() {
             variant='contained'
             color='primary'
             className={classes.button}
+            onClick={handleDelete}
           >
             Delete
           </Button>
