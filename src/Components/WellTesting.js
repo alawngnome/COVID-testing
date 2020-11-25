@@ -250,7 +250,7 @@ function WellTesting() {
         let wellBarcode = data.wellBarcode;
         deleteEntries.forEach((deleteEntry) => {
           if (wellBarcode === deleteEntry.wellBarcode) {
-            doc.ref.set({ wellBarcode: '' }, { merge: true });
+            doc.ref.set({ wellBarcode: '', checked: false }, { merge: true });
           }
         });
       });
