@@ -93,12 +93,14 @@ function WellTesting() {
   const updateData = () => {
     fetchPools().then((snapshot) => {
       let tempEntries = [];
+      let checkedCount = 0;
       snapshot.forEach((doc) => {
         let data = doc.data();
         let wellBarcode = data.wellBarcode;
         let poolBarcode = data.poolBarcode;
         let result = data.result;
         let checked = data.checked;
+        if (checked) checkedCount++;
         if (wellBarcode != '')
           tempEntries.push({
             wellBarcode,
@@ -107,6 +109,8 @@ function WellTesting() {
             checked,
           });
       });
+      if (checkedCount > 1) setEditBtnActive(false);
+      else setEditBtnActive(true);
       setEntries(tempEntries);
       setLoading(false);
     });
@@ -121,7 +125,6 @@ function WellTesting() {
     setResult(event.target.value);
   };
   const handleChecked = (event) => {
-    let checkedCount = 0;
     entries.map((entry) => {
       if (entry.wellBarcode === event.target.value) {
         fetchPools().then((snapshot) => {
@@ -133,15 +136,8 @@ function WellTesting() {
             }
           });
         });
-        entry.checked = event.target.checked;
-      }
-      if (entry.checked) {
-        checkedCount++;
       }
     });
-    if (checkedCount > 1) setEditBtnActive(false);
-    else setEditBtnActive(true);
-    setEntries(entries);
   };
   const handleAdd = () => {
     if (wellBarcode === '' || poolBarcode === '' || result === '') {
