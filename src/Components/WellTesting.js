@@ -86,6 +86,7 @@ function WellTesting() {
   const [wellBarcode, setWellBarcode] = useState('');
   const [poolBarcode, setPoolBarcode] = useState('');
   const [result, setResult] = useState('');
+  const [editBtnActive, setEditBtnActive] = useState(true);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -98,6 +99,20 @@ function WellTesting() {
   const handleChangeResult = (event) => {
     setResult(event.target.value);
   };
+  const handleChecked = (event) => {
+    let checkedCount = 0;
+    entries.map((entry) => {
+      if (entry.wellBarcode === event.target.value) {
+        entry.checked = event.target.checked;
+      }
+      if (entry.checked) {
+        checkedCount++;
+      }
+    });
+    if (checkedCount > 1) setEditBtnActive(false);
+    else setEditBtnActive(true);
+    setEntries(entries);
+  };
   const handleAdd = () => {
     if (wellBarcode === '' || poolBarcode === '' || result === '') {
       console.log('One of the fields are empty.');
@@ -109,7 +124,10 @@ function WellTesting() {
         let docWellBarcode = data.wellBarcode;
         let docPoolBarcode = data.poolBarcode;
         if (docWellBarcode == '' && poolBarcode == docPoolBarcode) {
-          doc.ref.set({ wellBarcode: wellBarcode }, { merge: true });
+          doc.ref.set(
+            { wellBarcode: wellBarcode, result: result },
+            { merge: true }
+          );
           fetchPools().then((snapshot) => {
             let tempEntries = [];
             snapshot.forEach((doc) => {
@@ -118,7 +136,12 @@ function WellTesting() {
               let poolBarcode = data.poolBarcode;
               let result = data.result;
               if (wellBarcode != '')
-                tempEntries.push({ wellBarcode, poolBarcode, result });
+                tempEntries.push({
+                  wellBarcode,
+                  poolBarcode,
+                  result,
+                  checked: false,
+                });
             });
             setEntries(tempEntries);
             setLoading(false);
@@ -145,7 +168,12 @@ function WellTesting() {
         let poolBarcode = data.poolBarcode;
         let result = data.result;
         if (wellBarcode != '')
-          tempEntries.push({ wellBarcode, poolBarcode, result });
+          tempEntries.push({
+            wellBarcode,
+            poolBarcode,
+            result,
+            checked: false,
+          });
       });
       setEntries(tempEntries);
       setLoading(false);
@@ -222,7 +250,11 @@ function WellTesting() {
               key={entry.wellBarcode}
             >
               <Grid className={classes.checkbox} item xs={1}>
-                <Checkbox color='primary' />
+                <Checkbox
+                  color='primary'
+                  value={entry.wellBarcode}
+                  onChange={handleChecked}
+                />
               </Grid>
               <Grid className={classes.gridItem} item xs={3}>
                 <Paper className={classes.text}>{entry.wellBarcode}</Paper>
@@ -241,6 +273,7 @@ function WellTesting() {
             variant='contained'
             color='primary'
             className={classes.button}
+            disabled={!editBtnActive}
           >
             Edit
           </Button>
