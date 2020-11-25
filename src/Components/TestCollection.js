@@ -68,14 +68,24 @@ function TestCollection() {
   const [testBarcode, setTestBarcode] = useState('');
   const [entries, setEntries] = useState([]);
 
-  // useEffect(() => {
-  //   let ref = db.collection('Employees');
-  //   ref.get().then((snapshot) => {
-  //     snapshot.forEach((doc) => {
-  //       console.log(doc.data().testCollection);
-  //     });
-  //   });
-  // });
+  useEffect(async () => {
+    let ref = db.collection('Employees');
+    let tempEntries = [];
+    await ref.get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        for (let i = 0; i < doc.data().testCollection.length; i++) {
+          tempEntries.push({
+            id: doc.data().ID,
+            testBarcode: doc.data().testCollection[i].testBarcode,
+            checked: doc.data().testCollection[i].checked,
+            result: doc.data().testCollection[i].result,
+            collectionTime: doc.data().testCollection[i].collectionTime,
+          });
+        }
+      });
+    });
+    setEntries(tempEntries);
+  }, [entries]);
 
   // handle state functions
 
@@ -92,65 +102,111 @@ function TestCollection() {
     let docRef;
     let ref = db.collection('Employees');
     let docRef2;
+    let count = 0;
     await ref.get().then((snapshot) => {
-      docRef2 = snapshot.docs[0].ref.id;
       snapshot.forEach((doc) => {
         if (id === doc.data().ID) {
           validId = true;
           docRef = doc;
+          docRef2 = snapshot.docs[count].ref.id;
         }
+        count++;
       });
     });
     if (!validId) alert('Employee Id is not valid');
     else {
-      // const newTest = {
-      //   id,
-      //   testBarcode,
-      //   checked: false,
-      // };
-      // let tempEntries = entries;
-      // tempEntries.push(newTest);
-      // setEntries(tempEntries);
-      // setId('');
-      // setTestBarcode('');
       let testCollection = docRef.data().testCollection;
       let addRef = ref.doc(docRef2);
       await addRef.set(
         {
-          ID: id,
           testCollection: [
             ...testCollection,
             (testCollection[testCollection.length] = {
               collectionTime: new Date().toISOString().slice(0, 10),
               result: 'in progress',
-              testBarcode: testBarcode,
+              testBarcode,
               checked: false,
             }),
           ],
         },
         { merge: true }
       );
+      setId('');
+      setTestBarcode('');
     }
   };
 
   const handleDelete = () => {
-    let tempEntries = entries.filter((entry) => !entry.checked);
-    setEntries(tempEntries);
+    let ref = db.collection('Employees');
+    let testCollection;
+    let count = 0;
+    ref.get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        let arr = [];
+        let tempRef = snapshot.docs[count].ref.id;
+        testCollection = doc.data().testCollection;
+        for (let i = 0; i < testCollection.length; i++) {
+          if (testCollection[i].checked) {
+            arr.push(i);
+          }
+        }
+
+        let newTestCollection = [];
+
+        for (let i = 0; i < testCollection.length; i++) {
+          let toBeAdded = true;
+          for (let j = 0; j < arr.length; j++) {
+            if (i === arr[j]) toBeAdded = false;
+          }
+          if (toBeAdded) newTestCollection.push(testCollection[i]);
+        }
+
+        ref.doc(tempRef).set(
+          {
+            testCollection: newTestCollection,
+          },
+          { merge: true }
+        );
+
+        count++;
+      });
+    });
   };
 
-  const handleChecked = (e) => {
-    let tempEntries = [];
-    entries.forEach((entry) => {
-      if (entry.id === e.target.value) {
-        // e.target.value = id of entry being modified
-        let copyEntry = entry;
-        copyEntry.checked = e.target.checked;
-        tempEntries.push(copyEntry);
-      } else {
-        tempEntries.push(entry);
-      }
+  const handleChecked = async (e) => {
+    let ref = db.collection('Employees');
+    let k = 0;
+    let docRef;
+    let testCollection;
+    let goalTestCollection;
+    let count = 0;
+    await ref.get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        if (e.target.value === doc.data().ID) {
+          testCollection = doc.data().testCollection;
+          for (let i = 0; i < testCollection.length; i++) {
+            if (testCollection[i].testBarcode === e.target.id) {
+              docRef = snapshot.docs[count].ref.id;
+              k = i;
+              goalTestCollection = testCollection;
+            }
+          }
+        }
+        count++;
+      });
     });
-    setEntries(tempEntries);
+    for (let i = 0; i < goalTestCollection.length; i++) {
+      if (i === k) {
+        goalTestCollection[i].checked = e.target.checked;
+      }
+    }
+
+    await ref.doc(docRef).set(
+      {
+        testCollection: goalTestCollection,
+      },
+      { merge: true }
+    );
   };
 
   // render
@@ -193,9 +249,18 @@ function TestCollection() {
           </Grid>
         </Grid>
         {entries.map((entry) => (
-          <Grid className={classes.gridItem} item xs={12} key={entry.id}>
+          <Grid
+            className={classes.gridItem}
+            item
+            xs={12}
+            key={entry.id + entry.testBarcode}
+          >
             <Grid className={classes.checkbox} item xs={1}>
-              <Checkbox value={entry.id} onChange={handleChecked} />
+              <Checkbox
+                id={entry.testBarcode}
+                value={entry.id}
+                onChange={handleChecked}
+              />
             </Grid>
             <Grid className={classes.gridItemPart} item xs={5}>
               <p className={classes.text} style={{ marginRight: '6vw' }}>
