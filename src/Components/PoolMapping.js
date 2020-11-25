@@ -268,8 +268,7 @@ function PoolMapping() {
   // edit only works for one checked box - do not dare check more than one box
   const handleEditPoolEntries = () => {
     let tempEditEntry = poolEntries.filter((entry) => entry.checked);
-    let tempEntries = poolEntries.filter((entry) => !entry.checked);
-    setPoolEntries(tempEntries); // getting rid of the entry to be edited
+
     setPoolBarcode(tempEditEntry[0].poolBarcode);
     let barCodeArr = tempEditEntry[0].testBarcode.split(',');
     let tempInput = {};
@@ -280,6 +279,39 @@ function PoolMapping() {
       };
     }
     setInputBarcode(tempInput);
+
+    //Deleting the entry
+    let db = firebase.firestore();
+    let deleteEntries = poolEntries.filter((entry) => entry.checked);
+
+    fetchPools().then((snapshot) => {
+      let dbpools = [];
+
+      snapshot.docs.forEach((doc) => {
+        dbpools.push(doc);
+      });
+
+      let idsToDelete = new Set();
+
+      for(let i = 0; i < deleteEntries.length; i++) {
+        for(let j = 0; j < dbpools.length; j++) {
+          if (deleteEntries[i]['poolBarcode'] === dbpools[j].data()['poolBarcode']) {
+            idsToDelete.add(dbpools[j]['ref'].id);
+          }
+        }
+      }
+
+      idsToDelete.forEach(id => {
+        db.collection("Pool").doc(id).delete().then(function () {
+          console.log("Document successfully deleted!");
+        }).catch(function (error) {
+          console.error("Error removing document: ", error);
+        });
+      });
+
+      let tempEntries = poolEntries.filter((entry) => !entry.checked);
+      setPoolEntries(tempEntries);
+    });
   };
 
   const handleDeletePoolEntries = () => {
@@ -302,8 +334,6 @@ function PoolMapping() {
           }
         }
       }
-
-      console.log(idsToDelete);
 
       idsToDelete.forEach(id => {
         db.collection("Pool").doc(id).delete().then(function () {
