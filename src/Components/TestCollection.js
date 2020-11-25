@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import firebase from '../Firebase/firebaseSetup';
+import firebase from '../Firebase/index';
 
 // styles
 const useStyles = makeStyles({
