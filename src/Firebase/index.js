@@ -29,14 +29,15 @@ export const fetchEmployeeHomeData = async (uid) => {
   return doc.data();
 };
 
-// WellTesting functions
-export const fetchPools = async () => {
-  const snapshot = await db.collection('Pool').get();
+//Fetch All Employees
+export const fetchEmployees = async () => {
+  const snapshot = await db.collection('Employees').get();
   return snapshot;
 };
 
-export const fetchEmployees = async () => {
-  const snapshot = await db.collection('Employees').get();
+// WellTesting functions
+export const fetchPools = async () => {
+  const snapshot = await db.collection('Pool').get();
   return snapshot;
 };
 

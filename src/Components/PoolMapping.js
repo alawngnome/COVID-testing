@@ -11,6 +11,9 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import Header from './Navbar';
 
+import { fetchPools, fetchEmployees } from '../Firebase/index';
+import firebase from '../Firebase/index';
+
 // styles
 const useStyles = makeStyles({
   root: {
@@ -179,13 +182,73 @@ function PoolMapping() {
       checked: false,
     };
 
-    // update poolEntries state, empty the input states on top
-    let tempEntries = poolEntries;
-    tempEntries.push(newPoolEntry);
-    setPoolEntries(tempEntries);
-    setPoolBarcode('');
-    setInputBarcode({});
-  };
+    fetchPools().then((snapshot) => {
+      let dbpools = [];
+
+      snapshot.docs.forEach((doc) => {
+        let data = doc.data();
+        dbpools.push(data);
+      });
+
+      for (let i = 0; i < dbpools.length; i++) {
+        if (dbpools[i]['poolBarcode'] == newPoolEntry.poolBarcode) {
+          alert('Pool barcode already exists!');
+          return;
+        }
+      }
+
+      let usersTests = [];
+
+      fetchEmployees().then((snapshot2) => {
+
+        snapshot2.docs.forEach((doc) => {
+          let userData = doc.data();
+          let userTests = userData['testCollection'];
+
+          for (let i = 0; i < userTests.length; i++) {
+            usersTests[userTests[i]["testBarcode"]] = userData["ID"];
+          }
+        });
+
+        let testCollection = [];
+
+        for (const key in inputBarcode) {
+          if (usersTests[inputBarcode[key]] == undefined) {
+            alert("A test in the pool does not exist!");
+            return;
+          }
+          else {
+            testCollection.push({ "employeeID": usersTests[inputBarcode[key]], "testBarcode": inputBarcode[key] });
+          }
+        }
+
+        let newDBpool = {
+          "poolBarcode": newPoolEntry.poolBarcode,
+          "result": "in progress",
+          "testCollection": testCollection,
+          "wellBarcode": "",
+          "checked" : false
+        };
+
+        let db = firebase.firestore();
+
+        db.collection('Pool')
+          .add(newDBpool)
+          .then(function () {
+            console.log('Document successfully written!');
+            // update poolEntries state, empty the input states on top
+            let tempEntries = poolEntries;
+            tempEntries.push(newPoolEntry);
+            setPoolEntries(tempEntries);
+            setPoolBarcode('');
+            setInputBarcode({});
+          })
+          .catch(function (error) {
+            console.error('Error writing document: ', error);
+          });
+      });
+    });
+  }
 
   // handle the checkboxes in second grid.
   const handleChecked = (e) => {
@@ -220,8 +283,39 @@ function PoolMapping() {
   };
 
   const handleDeletePoolEntries = () => {
-    let tempEntries = poolEntries.filter((entry) => !entry.checked);
-    setPoolEntries(tempEntries);
+    let db = firebase.firestore();
+    let deleteEntries = poolEntries.filter((entry) => entry.checked);
+
+    fetchPools().then((snapshot) => {
+      let dbpools = [];
+
+      snapshot.docs.forEach((doc) => {
+        dbpools.push(doc);
+      });
+
+      let idsToDelete = new Set();
+
+      for(let i = 0; i < deleteEntries.length; i++) {
+        for(let j = 0; j < dbpools.length; j++) {
+          if (deleteEntries[i]['poolBarcode'] === dbpools[j].data()['poolBarcode']) {
+            idsToDelete.add(dbpools[j]['ref'].id);
+          }
+        }
+      }
+
+      console.log(idsToDelete);
+
+      idsToDelete.forEach(id => {
+        db.collection("Pool").doc(id).delete().then(function () {
+          console.log("Document successfully deleted!");
+        }).catch(function (error) {
+          console.error("Error removing document: ", error);
+        });
+      });
+
+      let tempEntries = poolEntries.filter((entry) => !entry.checked);
+      setPoolEntries(tempEntries);
+    });
   };
 
   return (
