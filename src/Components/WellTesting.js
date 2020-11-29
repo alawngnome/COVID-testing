@@ -158,78 +158,72 @@ function WellTesting() {
             { wellBarcode: wellBarcode, result: result },
             { merge: true }
           );
-          if (result === 'negative') {
-            let negEmployees = [];
-            let testCollection = data.testCollection;
-            testCollection.forEach((collection) => {
-              negEmployees.push({
-                employeeID: collection.employeeID,
-                testBarcode: collection.testBarcode,
-              });
+          let employees = [];
+          let testCollection = data.testCollection;
+          testCollection.forEach((collection) => {
+            employees.push({
+              employeeID: collection.employeeID,
+              testBarcode: collection.testBarcode,
             });
-            fetchEmployees().then((snapshot) => {
-              snapshot.forEach((doc) => {
-                let data = doc.data();
-                negEmployees.forEach((employee) => {
-                  if (employee.employeeID === data.ID) {
-                    let docTestCollection = data.testCollection;
-                    for (let i = 0; i < docTestCollection.length; i++) {
-                      if (
-                        docTestCollection[i].testBarcode ===
-                        employee.testBarcode
-                      ) {
-                        docTestCollection[i].result = 'negative';
-                      }
+          });
+          fetchEmployees().then((snapshot) => {
+            snapshot.forEach((doc) => {
+              let data = doc.data();
+              negEmployees.forEach((employee) => {
+                if (employee.employeeID === data.ID) {
+                  let docTestCollection = data.testCollection;
+                  for (let i = 0; i < docTestCollection.length; i++) {
+                    if (
+                      docTestCollection[i].testBarcode === employee.testBarcode
+                    ) {
+                      docTestCollection[i].result = result;
                     }
-                    console.log(docTestCollection);
-                    doc.ref.set(
-                      { testCollection: docTestCollection },
-                      { merge: true }
-                    );
                   }
-                });
+                  console.log(docTestCollection);
+                  doc.ref.set(
+                    { testCollection: docTestCollection },
+                    { merge: true }
+                  );
+                }
               });
             });
-          }
+          });
         } else if (
           // Editing existing well
           wellBarcode === docWellBarcode &&
           poolBarcode === docPoolBarcode
         ) {
           doc.ref.set({ result: result }, { merge: true });
-          if (result === 'negative') {
-            let negEmployees = [];
-            let testCollection = data.testCollection;
-            testCollection.forEach((collection) => {
-              negEmployees.push({
-                employeeID: collection.employeeID,
-                testBarcode: collection.testBarcode,
-              });
+          let employees = [];
+          let testCollection = data.testCollection;
+          testCollection.forEach((collection) => {
+            employees.push({
+              employeeID: collection.employeeID,
+              testBarcode: collection.testBarcode,
             });
-            fetchEmployees().then((snapshot) => {
-              snapshot.forEach((doc) => {
-                let data = doc.data();
-                negEmployees.forEach((employee) => {
-                  if (employee.employeeID === data.ID) {
-                    let docTestCollection = data.testCollection;
-                    for (let i = 0; i < docTestCollection.length; i++) {
-                      if (
-                        docTestCollection[i].testBarcode ===
-                        employee.testBarcode
-                      ) {
-                        docTestCollection[i].result = 'negative';
-                      }
+          });
+          fetchEmployees().then((snapshot) => {
+            snapshot.forEach((doc) => {
+              let data = doc.data();
+              negEmployees.forEach((employee) => {
+                if (employee.employeeID === data.ID) {
+                  let docTestCollection = data.testCollection;
+                  for (let i = 0; i < docTestCollection.length; i++) {
+                    if (
+                      docTestCollection[i].testBarcode === employee.testBarcode
+                    ) {
+                      docTestCollection[i].result = result;
                     }
-                    console.log(docTestCollection);
-                    doc.ref.set(
-                      { testCollection: docTestCollection },
-                      { merge: true }
-                    );
                   }
-                });
+                  console.log(docTestCollection);
+                  doc.ref.set(
+                    { testCollection: docTestCollection },
+                    { merge: true }
+                  );
+                }
               });
             });
-          }
+          });
         } else {
           console.log('Pool barcode does not exist.');
         }
