@@ -103,8 +103,17 @@ function TestCollection() {
     let ref = db.collection('Employees');
     let docRef2;
     let count = 0;
+    ///
+    let currentTestBarcodes = [];
+    ///
     await ref.get().then((snapshot) => {
       snapshot.forEach((doc) => {
+        ///
+        let tempCourses = doc.data().testCollection;
+        for(let i = 0; i < tempCourses.length; i++) {
+          currentTestBarcodes.push(tempCourses[i]['testBarcode']);
+        }
+        ///
         if (id === doc.data().ID) {
           validId = true;
           docRef = doc;
@@ -115,6 +124,14 @@ function TestCollection() {
     });
     if (!validId) alert('Employee Id is not valid');
     else {
+      ///
+      for(let i = 0; i < currentTestBarcodes.length; i++) {
+        if(currentTestBarcodes[i] == testBarcode) {
+          alert('This test barcode is already in use!');
+          return;
+        }
+      }
+      ///
       let testCollection = docRef.data().testCollection;
       let addRef = ref.doc(docRef2);
       await addRef.set(
