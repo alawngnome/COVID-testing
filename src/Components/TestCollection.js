@@ -68,24 +68,30 @@ function TestCollection() {
   const [testBarcode, setTestBarcode] = useState('');
   const [entries, setEntries] = useState([]);
 
-  useEffect(async () => {
-    let ref = db.collection('Employees');
+  const ref = db.collection('Employees');
+
+  useEffect(() => {
     let tempEntries = [];
-    await ref.get().then((snapshot) => {
-      snapshot.forEach((doc) => {
-        for (let i = 0; i < doc.data().testCollection.length; i++) {
-          tempEntries.push({
-            id: doc.data().ID,
-            testBarcode: doc.data().testCollection[i].testBarcode,
-            checked: doc.data().testCollection[i].checked,
-            result: doc.data().testCollection[i].result,
-            collectionTime: doc.data().testCollection[i].collectionTime,
-          });
-        }
+    ref
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          for (let i = 0; i < doc.data().testCollection.length; i++) {
+            let currentTestCollection = doc.data().testCollection[i];
+            tempEntries.push({
+              id: doc.data().ID,
+              testBarcode: currentTestCollection.testBarcode,
+              checked: currentTestCollection.checked,
+              result: currentTestCollection.result,
+              collectionTime: currentTestCollection.collectionTime,
+            });
+          }
+        });
+      })
+      .then(() => {
+        setEntries(tempEntries);
       });
-    });
-    setEntries(tempEntries);
-  }, [db.collection('Employees')]);
+  }, [ref]);
 
   // handle state functions
 
@@ -110,8 +116,8 @@ function TestCollection() {
       snapshot.forEach((doc) => {
         ///
         let tempCourses = doc.data().testCollection;
-        for(let i = 0; i < tempCourses.length; i++) {
-          currentTestBarcodes.push(tempCourses[i]['testBarcode']);
+        for (let i = 0; i < tempCourses.length; i++) {
+          currentTestBarcodes.push(tempCourses[i].testBarcode);
         }
         ///
         if (id === doc.data().ID) {
@@ -125,8 +131,8 @@ function TestCollection() {
     if (!validId) alert('Employee Id is not valid');
     else {
       ///
-      for(let i = 0; i < currentTestBarcodes.length; i++) {
-        if(currentTestBarcodes[i] == testBarcode) {
+      for (let i = 0; i < currentTestBarcodes.length; i++) {
+        if (currentTestBarcodes[i] === testBarcode) {
           alert('This test barcode is already in use!');
           return;
         }
@@ -214,7 +220,7 @@ function TestCollection() {
     });
     for (let i = 0; i < goalTestCollection.length; i++) {
       if (i === k) {
-        goalTestCollection[i].checked = e.target.checked;
+        goalTestCollection[i].checked = !e.target.checked;
       }
     }
 
@@ -276,6 +282,7 @@ function TestCollection() {
               <Checkbox
                 id={entry.testBarcode}
                 value={entry.id}
+                checked={entry.checked}
                 onChange={handleChecked}
               />
             </Grid>
