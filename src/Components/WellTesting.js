@@ -169,7 +169,7 @@ function WellTesting() {
           fetchEmployees().then((snapshot) => {
             snapshot.forEach((doc) => {
               let data = doc.data();
-              negEmployees.forEach((employee) => {
+              employees.forEach((employee) => {
                 if (employee.employeeID === data.ID) {
                   let docTestCollection = data.testCollection;
                   for (let i = 0; i < docTestCollection.length; i++) {
@@ -205,7 +205,7 @@ function WellTesting() {
           fetchEmployees().then((snapshot) => {
             snapshot.forEach((doc) => {
               let data = doc.data();
-              negEmployees.forEach((employee) => {
+              employees.forEach((employee) => {
                 if (employee.employeeID === data.ID) {
                   let docTestCollection = data.testCollection;
                   for (let i = 0; i < docTestCollection.length; i++) {
